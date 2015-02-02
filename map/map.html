@@ -16,10 +16,12 @@
 		}
 	</style>
 	<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=MTbA1cyzTlx8L3apKKPN37wL"></script>
+	<script type="text/javascript" src="http://api.map.baidu.com/library/SearchInfoWindow/1.5/src/SearchInfoWindow_min.js"></script>
+	<link rel="stylesheet" href="http://api.map.baidu.com/library/SearchInfoWindow/1.5/src/SearchInfoWindow_min.css" />
 	<title>地图Demo</title>
 </head>
 <body>
-	<div id="border"><div id="allmap" width="500px" height="200px"></div><
+	<div id="border"><div id="allmap" width="500px" height="200px"></div>
 </body>
 </html>
 <script type="text/javascript">
@@ -32,13 +34,68 @@
 	map.addControl(bottom_left_control);
 	map.addControl(top_left_navigate);
 	var myGeo = new BMap.Geocoder();
-	myGeo.getPoint("重庆市渝中区春语江山", function(point){
-		if (point) {
-			map.centerAndZoom(point, 15);
-			var marker=new BMap.Marker(point);
+	var address="重庆市渝中区春语江山小区";
+	var content='<divstyle="margin:0;line-height:20px;padding:2px;"></div>'+
+		'地址：重庆市渝中区两路口下徐家坡43号<br/>'+
+		'电话：023 2323289<br/>'+
+		'简介：春语江山小区位于鹅岭公园下方，毗陵长江，紧挨着地铁1号线<br/>'+
+		'，公交站。';
 
-			map.addOverlay(marker);
-			marker.setAnimation(BMAP_ANIMATION_BOUNCE);
+	var pointResult;
+	myGeo.getPoint(address, function(point){
+		if (point) {
+
+			pointResult=point;
+			alert(pointResult.lng+","+pointResult.lat);
+			map.centerAndZoom(point, 15);
+			
+			//get a marker instance
+			//var marker=new BMap.Marker(point);
+			
+			//set a marker to map
+			//map.addOverlay(marker);
+
+			//Set marker's animation
+			//marker.setAnimation(BMAP_ANIMATION_BOUNCE);
+			
+			//A text label 
+		//	var label=new BMap.Label(address,{offset:new BMap.Size(-60,-40)});
+
+			//Set a label to marker
+		//	marker.setLabel(label);
+
+			//onClick method for EventListener
+		//	function onClick(){
+		//			alert(point.lng+","+point.lat);
+		//	};
+		//	marker.addEventListener("click",onClick);
+		
+		
+			var searchInfoWindow=null;
+			searchInfoWindow=new BMapLib.SearchInfoWindow(map,content,{
+				title:"春语江山",
+				width:290,
+				height:105,
+				panel:"panel",
+				enableAutoPan:true,
+				searchTyeps:[
+				BMAPLIB_TAB_SEARCH,
+				BMAPLIB_TAB_TO_HERE,
+				BMAPLIB_TAB_FROM_HERE
+				]
+			});
+			var newMarker=new BMap.Marker(pointResult);
+			map.addOverlay(newMarker);
+			newMarker.addEventListener("click",function(e){
+				searchInfoWindow.open(newMarker);
+			}); 
+			
+
+			
 		}
 	}, "广元市");
+			
+			
+
+	
 </script>
